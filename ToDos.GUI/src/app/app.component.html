@@ -1,0 +1,360 @@
+<div class="page">
+  <div class="card">
+    <!-- Login-->
+    <div class="card-header">
+      <h5 class="card-title">Logowanie użytkownika</h5>
+    </div>
+    <div class="card-body">
+      <ng-container *ngIf="accountLoginSuccess==false">
+        <form class="form">
+          <div class="form-group">
+            <label>Login:</label>
+            <input class="form-control" placeholder="Wprowadź swój login" [(ngModel)]="accountLoginValue"
+              [ngModelOptions]="{standalone: true}">
+          </div>
+          <div class="form-group">
+            <label>Hasło:</label>
+            <input type="password" autocomplete="on" class="form-control" placeholder="Wprowadź hasło"
+              [(ngModel)]="accountPasswordValue" [ngModelOptions]="{standalone: true}">
+          </div>
+        </form>
+        <p class="card-text">Kliknij przycisk zaloguj, aby się zalogować.</p>
+        <button class="btn btn-primary" (click)="accountLogin()">Zaloguj</button>
+      </ng-container>
+      <ng-container *ngIf="accountLoginError==0; else accountLoginError400Occured">
+        <ng-container *ngIf="accountLoginSuccess==true">
+          <div class="alert alert-success alert-success-margin-top" role="alert">
+            Zalogowano pomyślnie - dodano dostęp do aktualizacji i usuwania zadań.
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #accountLoginError400Occured>
+        <ng-container *ngIf="accountLoginError==400; else accountLoginError404Occured">
+          <div class="alert alert-danger" role="alert">
+            Wprowadzono błędne dane - spróbuj ponownie. Status: {{accountLoginError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #accountLoginError404Occured>
+        <ng-container *ngIf="accountLoginError==404; else accountLoginErrorOtherOccured">
+          <div class="alert alert-danger" role="alert">
+            Nie można odnaleźć serwera. Status: {{accountLoginError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #accountLoginErrorOtherOccured>
+        <div class="alert alert-danger" role="alert">
+          Napotkano inny błąd. Spróbuj później. Status: {{accountLoginError}}
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="card">
+    <!--Logout-->
+    <div class="card-header">
+      <h5 class="card-title">Informacje o użytkowniku</h5>
+    </div>
+    <div class="card-body">
+      <form class="form">
+        <div class="form-group">
+          <label>ID Użytkownika:</label>
+          <h6 class="card-subtitle mb-2">{{accountUserInfo.userId}}</h6>
+        </div>
+        <div class="form-group">
+          <label>Nazwa używkownika:</label>
+          <h6 class="card-subtitle mb-2">{{accountUserInfo.userName}}</h6>
+        </div>
+        <div class="form-group">
+          <label>Rola użytkownika:</label>
+          <h6 class="card-subtitle mb-2">{{accountUserInfo.userRole}}</h6>
+        </div>
+      </form>
+      <p class="card-text">Kliknij przycisk wyloguj, aby się wylogować.</p>
+      <button class="btn btn-primary" (click)="accountLogout()">Wyloguj</button>
+      <ng-container *ngIf="accountLogoutError==0 && accountLogoutSuccess==true else accountLogout1ErrorOccured">
+        <div class="alert alert-success" role="alert">
+          Wylogowano pomyślnie - ograniczono dostęp do aktualizacji i usuwania zadań.
+        </div>
+      </ng-container>
+      <ng-template #accountLogout1ErrorOccured>
+        <ng-container *ngIf="accountLogoutError==1">
+          <div class="alert alert-danger" role="alert">
+            Brak zalogowanego użytkownika - nie można wylogować.
+          </div>
+        </ng-container>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="card">
+    <!-- getAllTasks -->
+    <div class="card-header">
+      <h5 class="card-title">Wyświetlanie wszystkich zadań</h5>
+    </div>
+    <ng-container *ngIf="getAllTasksShowed==false">
+      <div class=" card-body">
+        <p class="card-text">Kliknij przycisk poniżej, by wyświetlić wszystkie zadania. </p>
+        <button class="btn btn-primary" (click)="getAllTasks()">Wyświetl wszystkie zadania</button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="getAllTasksShowed==true">
+      <div class=" card-body">
+        <p class="card-text">Kliknij przycisk poniżej, by ukryć wszystkie zadania. </p>
+        <button class="btn btn-primary" (click)="getAllTasksHide()">Ukryj wszystkie zadania</button>
+        <ng-container *ngIf="getAllTasksError==0; else getAllTasksError404Occured">
+          <ul class="list">
+            <li class="task" *ngFor="let task of getAllTasksList">
+              GUID: <b>{{task.id}}</b><br>
+              Nazwa zadania: <b>{{task.value}}</b><br>
+              Zadanie zakończone: <b>{{task.isCompleted}}</b><br>
+            </li>
+          </ul>
+        </ng-container>
+        <ng-template #getAllTasksError404Occured>
+          <ng-container *ngIf="getAllTasksError==404; else getAllTasksErrorOtherOccured">
+            <div class="alert alert-danger" role="alert">
+              Nie można odnaleźć serwera. Status: {{getAllTasksError}}
+            </div>
+          </ng-container>
+        </ng-template>
+        <ng-template #getAllTasksErrorOtherOccured>
+          <div class="alert alert-danger" role="alert">
+            Napotkano inny błąd. Spróbuj później. Status: {{getAllTasksError}}
+          </div>
+        </ng-template>
+      </div>
+    </ng-container>
+
+  </div>
+
+  <div class="card">
+    <!-- getTask -->
+    <div class="card-header">
+      <h5 class="card-title">Wyświetlanie zadania na podstawie ID</h5>
+    </div>
+    <div class="card-body">
+      <p class="card-text">Wpisz ID zadania, a następnie kliknij przycisk, by wyświetlić zadanie na podstawie ID. </p>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Wprowadź ID zadania" aria-label="Wprowadź ID zadania"
+          aria-describedby="basic-addon1" [(ngModel)]="getTaskInputId">
+      </div>
+      <button class="btn btn-primary" (click)="getTask()">Wyświetl zadanie</button>
+      <ng-container *ngIf="(getTaskError==0); else getTaskError400Occured">
+        <ul class="list" *ngIf="getTaskTask != undefined">
+          <li class="task">
+            GUID: <b>{{getTaskTask.id}}</b><br>
+            Nazwa zadania: <b>{{getTaskTask.value}}</b><br>
+            Zadanie zakończone: <b>{{getTaskTask.isCompleted}}</b><br>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #getTaskError400Occured>
+        <ng-container *ngIf="getTaskError==400; else getTaskError404Occured">
+          <div class="alert alert-danger" role="alert">
+            Wprowadzono błędne dane. Spróbuj jeszcze raz. Status: {{getTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #getTaskError404Occured>
+        <ng-container *ngIf="getTaskError==404; else getTaskErrorOtherOccured">
+          <div class="alert alert-danger" role="alert">
+            Nie można odnaleźć zadania o danym ID. Status: {{getTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #getTaskErrorOtherOccured>
+        <div class="alert alert-danger" role="alert">
+          Napotkano inny błąd. Spróbuj później. Status: {{getTaskError}}
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="card">
+    <!-- getLongTasks -->
+    <div class="card-header">
+      <h5 class="card-title">Pobieranie zadań o nazwie dłuższej niż wprowadzona ilość znaków</h5>
+    </div>
+    <div class="card-body">
+      <p class="card-text">Wpisz minimalną długość nazwy zadania, a następnie kliknij przycisk, by wyświetlić wszystkie
+        zadania o nazwie dłuższej niż wprowadzona ilość znaków.</p>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Wprowadź minimalną ilość znaków dla zadania"
+          aria-label="Wprowadź minimalną ilość znaków dla zadania" [(ngModel)]="getLongTasksSignsAmount">
+      </div>
+      <button class="btn btn-primary" (click)="getLongTasks()">Filtruj zadania</button>
+      <ng-container *ngIf="getLongTasksError==0; else getLongTasksError400Occured">
+        <ul class="list">
+          <li class="task" *ngFor="let task of getLongTasksList">
+            GUID: <b>{{task.id}}</b><br>
+            Nazwa zadania: <b>{{task.value}}</b><br>
+            Zadanie zakończone: <b>{{task.isCompleted}}</b><br>
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #getLongTasksError400Occured>
+        <ng-container *ngIf="getLongTasksError==400; else getLongTasksErrorOtherOccured">
+          <div class="alert alert-danger" role="alert">
+            Wprowadzono błędną wartość. Spróbuj jeszcze raz. Status: {{getLongTasksError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #getLongTasksErrorOtherOccured>
+        <div class="alert alert-danger" role="alert">
+          Napotkano inny błąd. Spróbuj później. Status: {{getLongTasksError}}
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="card">
+    <!-- addTask -->
+    <div class="card-header">
+      <h5 class="card-title">Dodawanie nowego zadania</h5>
+    </div>
+    <div class="card-body">
+      <p class="card-text">Wpisz nazwę zadanie, które chcesz dodać.</p>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Minimum 5 znaków" [(ngModel)]="addTaskNewTaskName">
+      </div>
+      <button class="btn btn-primary" (click)="addTask()">Dodaj zadanie</button>
+      <ng-container *ngIf="addTaskError==0; else addTaskError400Occured">
+        <ng-container *ngIf="addTaskTaskAdded==true">
+          <div class="alert alert-success" role="alert">
+            Zadanie zostało dodane do listy.
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #addTaskError400Occured>
+        <ng-container *ngIf="addTaskError==400; else addTaskErrorOtherOccured">
+          <div class="alert alert-danger" role="alert">
+            Wprowadzono błędną wartość. Spróbuj jeszcze raz. Status: {{addTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #addTaskErrorOtherOccured>
+        <div class="alert alert-danger" role="alert">
+          Napotkano inny błąd. Spróbuj później. Status: {{addTaskError}}
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="card">
+    <!-- updateTask -->
+    <div class="card-header">
+      <h5 class="card-title">Aktualizacja zadania</h5>
+    </div>
+    <div class="card-body">
+      <p class="card-text">Wypełnij poniższy formularz, by zaktualizować zadanie na podstawie jego ID. Pozostawienie
+        pustego pola nie zmieni jego wartości.
+      </p>
+      <form class="form">
+        <div class="form-group">
+          <label>ID zadania:</label>
+          <input class="form-control" placeholder="Wprowadź ID zadania" [(ngModel)]="updateTaskInputId"
+            [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="form-group">
+          <label>Nazwa zadania:</label>
+          <input class="form-control" placeholder="Wprowadź opcjonalnie nową nazwę zadania"
+            [(ngModel)]="updateTaskInputValue" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="updateTaskInputIsCompleted"
+            [ngModelOptions]="{standalone: true}">
+          <label class="form-check-label">Oznacz zadanie jako zakończone</label>
+        </div>
+      </form>
+      <button class="btn btn-primary" (click)="updateTask()">Aktualizuj zadanie</button>
+
+      <ng-container *ngIf="updateTaskError==0; else updateTaskError400Occured">
+        <ng-container *ngIf="updateTaskTaskUpdated==true">
+          <div class="alert alert-success" role="alert">
+            Zadanie zostało poprawnie nadpisane.
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #updateTaskError400Occured>
+        <ng-container *ngIf="updateTaskError==400; else updateTaskError401Occured">
+          <div class="alert alert-danger" role="alert">
+            Wprowadzono błędną wartość. Spróbuj jeszcze raz. Status: {{updateTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #updateTaskError401Occured>
+        <ng-container *ngIf="updateTaskError==401; else updateTaskError404Occured">
+          <div class="alert alert-danger" role="alert">
+            Akcja dostępna tylko dla zalogowanych użytkowników. Status: {{updateTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #updateTaskError404Occured>
+        <ng-container *ngIf="updateTaskError==404; else updateTaskErrorOtherOccured">
+          <div class="alert alert-danger" role="alert">
+            Nie znaleziono zadania o podanym ID. Status: {{updateTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #updateTaskErrorOtherOccured>
+        <div class="alert alert-danger" role="alert">
+          Napotkano inny błąd. Spróbuj później. Status: {{updateTaskError}}
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <!-- removeTask -->
+    <div class="card-header">
+      <h5 class="card-title">Usuwanie zadania na podstawie ID</h5>
+    </div>
+    <div class="card-body">
+      <p class="card-text">Wpisz ID zadania, które chcesz usunąć.</p>
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Wprowadź ID zadania do usunięcia"
+          aria-label="Wprowadź ID zadania do usunięcia" aria-describedby="basic-addon1" [(ngModel)]="removeTaskInputId">
+      </div>
+      <button class="btn btn-primary" (click)="removeTask()">Usuń zadanie</button>
+      <ng-container *ngIf="(removeTaskError==0); else removeTaskError400Occured">
+        <ng-container *ngIf="removeTaskTaskRemoved==true">
+          <div class="alert alert-success" role="alert">
+            Zadanie zostało usunięte z listy.
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #removeTaskError400Occured>
+        <ng-container *ngIf="removeTaskError==400; else removeTaskError401Occured">
+          <div class="alert alert-danger" role="alert">
+            Wprowadzono błędne dane. Spróbuj ponownie. Status: {{removeTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #removeTaskError401Occured>
+        <ng-container *ngIf="removeTaskError==401; else removeTaskError404Occured">
+          <div class="alert alert-danger" role="alert">
+            Akcja dostępna tylko dla zalogowanych użytkowników. Status: {{removeTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #removeTaskError404Occured>
+        <ng-container *ngIf="removeTaskError==404; else removeTaskErrorOtherOccured">
+          <div class="alert alert-danger" role="alert">
+            Nie można odnaleźć zadania o danym ID. Wprowadź poprawne dane. Status: {{removeTaskError}}
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #removeTaskErrorOtherOccured>
+        <div class="alert alert-danger" role="alert">
+          Napotkano inny błąd. Spróbuj później. Status: {{removeTaskError}}
+        </div>
+      </ng-template>
+    </div>
+  </div>

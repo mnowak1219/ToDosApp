@@ -1,0 +1,53 @@
+.box {
+  background-color: lightgray;
+  border-radius: 10px;
+  margin: 20px;
+  padding: 20px;
+}
+
+.page {
+  position: relative;
+  width: 90vw;
+  margin: auto;
+}
+
+.card {
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 80vw;
+}
+
+.alert-danger {
+  margin-top: 20px;
+  margin-bottom: 0px;
+}
+
+.alert-success {
+  margin-top: 20px;
+  margin-bottom: 0px;
+}
+.alert-success-margin-top{
+  margin-top: 0px;
+}
+
+.form {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.list {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.task {
+  background-color: rgb(223, 243, 255);
+  border-radius: 5px;
+  margin-top: 10px;
+  padding: 10px;
+}
